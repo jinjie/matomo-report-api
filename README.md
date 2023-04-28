@@ -4,6 +4,8 @@ Simple implementation of Matomo Reporting API
 
 There are still a lot to work on...
 
+[Matomo Reporting API Documentation](https://developer.matomo.org/api-reference/reporting-api)
+
 ## Install 
 
 `go get github.com/jinjie/matomo-report-api`
