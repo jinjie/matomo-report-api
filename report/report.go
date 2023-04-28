@@ -1,12 +1,15 @@
 package report
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/google/go-querystring/query"
 )
+
+type Metric interface{}
 
 type Client struct {
 	ApiKey  string
@@ -22,13 +25,7 @@ func NewClient(HostUrl string, ApiKey string, SiteId int) *Client {
 	}
 }
 
-func (c *Client) GetJSON(req *Request) (resp string, err error) {
-	req.Format = FORMAT_JSON
-	return c.Get(req)
-}
-
-// Get data in JSON format by default.
-func (c *Client) Get(req *Request) (result string, err error) {
+func (c *Client) GetJSON(req Request) (json string, err error) {
 	req.SiteId = c.SiteId
 	req.TokenAuth = c.ApiKey
 
@@ -61,6 +58,21 @@ func (c *Client) Get(req *Request) (result string, err error) {
 	}
 
 	return string(resultBytes), nil
+}
+
+// Get data and return Metric
+func (c *Client) Get(req Request, m interface{}) (err error) {
+	j, err := c.GetJSON(req)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal([]byte(j), &m)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // See https://developer.matomo.org/api-reference/reporting-api for detailed
@@ -99,8 +111,8 @@ const (
 	FORMAT_ORIGINAL = "original"
 )
 
-func NewRequest() *Request {
-	return &Request{
+func NewRequest() Request {
+	return Request{
 		Module: "API",
 		Method: "Actions.get",
 		Period: PERIOD_DAY,

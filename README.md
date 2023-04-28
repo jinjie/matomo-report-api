@@ -32,12 +32,13 @@ func main() {
 
 	req.Date = report.DATE_YESTERDAY
 
-	result, err := c.Get(req)
+	result := report.ActionsGetMetric{}
+	err := c.Get(req, &result)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(result)
+	fmt.Printf("%+v\n", result)
 }
 
 ```
