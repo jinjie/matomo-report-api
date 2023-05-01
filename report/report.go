@@ -26,10 +26,7 @@ func NewClient(HostUrl string, ApiKey string, SiteId int) *Client {
 	}
 }
 
-func (c *Client) GetJSON(req Request) (json string, err error) {
-	req.SiteId = c.SiteId
-	req.TokenAuth = c.ApiKey
-
+func (c *Client) Execute(req *Request) (json string, err error) {
 	q, err := req.QueryString()
 	if err != nil {
 		return "", err
@@ -62,13 +59,24 @@ func (c *Client) GetJSON(req Request) (json string, err error) {
 }
 
 // Get data and return Metric
-func (c *Client) Get(req Request, m interface{}) (err error) {
+func (c *Client) Get(req *Request, m interface{}) (err error) {
 	// todo design a better way to check if req is empty
 	if req.Method == "" {
 		return errors.New("use NewRequest() to create a request")
 	}
 
-	j, err := c.GetJSON(req)
+	if req.SiteId == 0 { // if not set, client default
+		req.SiteId = c.SiteId
+	}
+
+	req.TokenAuth = c.ApiKey
+
+	// Will always return JSON format for now
+	req.Format = FORMAT_JSON
+
+	fmt.Printf("req: %v\n", req)
+
+	j, err := c.Execute(req)
 	if err != nil {
 		return err
 	}
@@ -79,52 +87,6 @@ func (c *Client) Get(req Request, m interface{}) (err error) {
 	}
 
 	return nil
-}
-
-// See https://developer.matomo.org/api-reference/reporting-api for detailed
-// information about the parameters.
-type Request struct {
-	Module string `url:"module"` // eg, API
-	Method string `url:"method"` // eg, VisitsSummary.getVisits
-
-	SiteId int    `url:"idSite"` // eg, 1 or 1,2,3
-	Period string `url:"period"` // one of PERIOD_*
-	Date   string `url:"date"`   // one of DATE_* or range of date. eg, 2014-01-01,2014-01-31
-	Format string `url:"format"` // one of FORMAT_*
-
-	TokenAuth string `url:"token_auth"` // eg, abc123
-}
-
-const (
-	PERIOD_DAY   = "day"
-	PERIOD_WEEK  = "week"
-	PERIOD_MONTH = "month"
-	PERIOD_YEAR  = "year"
-	PERIOD_RANGE = "range"
-
-	DATE_TODAY      = "today"
-	DATE_YESTERDAY  = "yesterday"
-	DATE_LAST_WEEK  = "lastWeek"
-	DATE_LAST_MONTH = "lastMonth"
-	DATE_LAST_YEAR  = "lastYear"
-
-	FORMAT_XML      = "xml"
-	FORMAT_JSON     = "json"
-	FORMAT_CSV      = "csv"
-	FORMAT_TSV      = "tsv"
-	FORMAT_HTML     = "html"
-	FORMAT_RSS      = "rss"
-	FORMAT_ORIGINAL = "original"
-)
-
-func NewRequest() Request {
-	return Request{
-		Module: "API",
-		Method: "Actions.get",
-		Period: PERIOD_DAY,
-		Date:   DATE_TODAY,
-		Format: FORMAT_JSON,
-	}
 }
 
 func (r *Request) QueryString() (q string, err error) {
