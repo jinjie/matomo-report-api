@@ -17,28 +17,79 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/jinjie/matomo-report-api/report"
 )
 
 func main() {
 	c := report.NewClient(
-		"https://matomo.example.com/",
-		"yourapikey",
-		1, // idSite
+		"https://demo.matomo.cloud/",
+		"anonymous",
+		1,
 	)
 
-	req := report.NewRequest()
+	// Get the number of visits yesterday
+	req := report.NewRequest().
+		SetPeriod(report.PERIOD_DAY).
+		SetDate("yesterday")
 
-	req.Date = report.DATE_YESTERDAY
-
-	result := report.ActionsGetMetric{}
-	err := c.Get(req, &result)
+	yesterday := &report.ActionsGetMetric{}
+	err := c.Get(req, yesterday)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("%+v\n", result)
-}
+	// Print the result
+	fmt.Println("Number of visits yesterday:")
+	fmt.Printf("%#v\n", yesterday)
 
+	// Get the number of visits for the last 30 days
+	req = report.NewRequest().
+		SetPeriod(report.PERIOD_DAY).
+		SetDate("last30")
+
+	last30 := make(map[string]*report.ActionsGetMetric)
+	err = c.Get(req, &last30)
+
+	if err != nil {
+		panic(err)
+	}
+
+	// Print the result
+	fmt.Println("Number of visits last 30 days:")
+	for i, v := range last30 {
+		fmt.Printf("%s: %#v\n", i, v)
+	}
+
+	// Get the number of visits between 2 dates
+	from := time.Date(2023, 3, 1, 0, 0, 0, 0, time.Local)
+	to := time.Date(2023, 4, 15, 0, 0, 0, 0, time.Local)
+	req = report.NewRequest().
+		SetPeriod(report.PERIOD_DAY).
+		SetDate(
+			report.DateRange(
+				from,
+				to,
+			),
+		)
+
+	dateRange := make(map[string]*report.ActionsGetMetric)
+	err = c.Get(req, &dateRange)
+
+	if err != nil {
+		panic(err)
+	}
+
+	// Print the result
+	fmt.Printf(
+		"Number of visits between %s and %s:\n",
+		from.Format("2006-01-02"),
+		to.Format("2006-01-02"),
+	)
+
+	for i, v := range dateRange {
+		fmt.Printf("%s: %#v\n", i, v)
+	}
+}
 ```

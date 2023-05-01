@@ -74,8 +74,6 @@ func (c *Client) Get(req *Request, m interface{}) (err error) {
 	// Will always return JSON format for now
 	req.Format = FORMAT_JSON
 
-	fmt.Printf("req: %v\n", req)
-
 	j, err := c.Execute(req)
 	if err != nil {
 		return err
