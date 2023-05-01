@@ -6,10 +6,15 @@ type Request struct {
 	Module string `url:"module"` // eg, API
 	Method string `url:"method"` // eg, VisitsSummary.getVisits
 
-	SiteId int    `url:"idSite"` // eg, 1 or 1,2,3
-	Period string `url:"period"` // one of PERIOD_*
-	Date   string `url:"date"`   // one of DATE_* or range of date. eg, 2014-01-01,2014-01-31
-	Format string `url:"format"` // one of FORMAT_*
+	SiteId      int    `url:"idSite"`                 // eg, 1 or 1,2,3
+	Period      string `url:"period"`                 // one of PERIOD_*
+	Date        string `url:"date"`                   // one of DATE_* or range of date. eg, 2014-01-01,2014-01-31
+	Format      string `url:"format"`                 // one of FORMAT_*
+	FilterLimit int    `url:"filter_limit,omitempty"` // eg, 10
+
+	// eg, country==United States
+	// @see https://developer.matomo.org/api-reference/reporting-api-segmentation
+	Segment string `url:"segment,omitempty"`
 
 	TokenAuth string `url:"token_auth"` // eg, abc123
 }
