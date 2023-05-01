@@ -2,6 +2,7 @@ package report
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -62,6 +63,10 @@ func (c *Client) GetJSON(req Request) (json string, err error) {
 
 // Get data and return Metric
 func (c *Client) Get(req Request, m interface{}) (err error) {
+	if req.Method == "" {
+		return errors.New("use NewRequest() to create a request")
+	}
+
 	j, err := c.GetJSON(req)
 	if err != nil {
 		return err
