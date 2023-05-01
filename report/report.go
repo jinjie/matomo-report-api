@@ -63,6 +63,7 @@ func (c *Client) GetJSON(req Request) (json string, err error) {
 
 // Get data and return Metric
 func (c *Client) Get(req Request, m interface{}) (err error) {
+	// todo design a better way to check if req is empty
 	if req.Method == "" {
 		return errors.New("use NewRequest() to create a request")
 	}
