@@ -1,5 +1,7 @@
 # Go Matomo Reporting API
 
+[![Go](https://github.com/jinjie/matomo-report-api/actions/workflows/go.yml/badge.svg)](https://github.com/jinjie/matomo-report-api/actions/workflows/go.yml)
+
 Simple implementation of Matomo Reporting API
 
 There are still a lot to work on...
