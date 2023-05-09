@@ -20,6 +20,29 @@ type Request struct {
 }
 
 const (
+	METHOD_ACTIONS_GET                                   = "Actions.get"
+	METHOD_ACTIONS_GET_PAGE_URLS                         = "Actions.getPageUrls"
+	METHOD_ACTIONS_GET_PAGE_URLS_FOLLOWING_SITE_SEARCH   = "Actions.getPageUrlsFollowingSiteSearch"
+	METHOD_ACTIONS_GET_PAGE_TITLES_FOLLOWING_SITE_SEARCH = "Actions.getPageTitlesFollowingSiteSearch"
+	METHOD_ACTIONS_GET_PAGE_TITLES                       = "Actions.getPageTitles"
+	METHOD_ACTIONS_GET_DOWNLOADS                         = "Actions.getDownloads"
+	METHOD_ACTIONS_GET_OUTLINKS                          = "Actions.getOutlinks"
+
+	METHOD_VISITS_SUMMARY_GET                  = "VisitsSummary.get"
+	METHOD_VISITS_SUMMARY_GET_UNIQUE_VISITORS  = "VisitsSummary.getUniqueVisitors"
+	METHOD_VISITS_SUMMARY_GET_VISITS           = "VisitsSummary.getVisits"
+	METHOD_VISITS_SUMMARY_GET_ACTIONS          = "VisitsSummary.getActions"
+	METHOD_VISITS_SUMMARY_GET_MAX_ACTIONS      = "VisitsSummary.getMaxActions"
+	METHOD_VISITS_SUMMARY_GET_BOUNCE_COUNT     = "VisitsSummary.getBounceCount"
+	METHOD_VISITS_SUMMARY_GET_VISITS_CONVERTED = "VisitsSummary.getVisitsConverted"
+
+	METHOD_EVENTS_GET_CATEGORY                = "Events.getCategory"
+	METHOD_EVENTS_GET_ACTION                  = "Events.getAction"
+	METHOD_EVENTS_GET_NAME                    = "Events.getName"
+	METHOD_EVENTS_GET_ACTION_FROM_CATEGORY_ID = "Events.getActionFromCategoryId"
+	METHOD_EVENTS_GET_NAME_FROM_ACTION_ID     = "Events.getNameFromActionId"
+	METHOD_EVENTS_GET_CATEGORY_FROM_NAME_ID   = "Events.getCategoryFromNameId"
+
 	PERIOD_DAY   = "day"
 	PERIOD_WEEK  = "week"
 	PERIOD_MONTH = "month"
