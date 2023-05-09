@@ -1,8 +1,20 @@
 package report
 
+import (
+	"fmt"
+
+	"github.com/google/go-querystring/query"
+)
+
+type Requestable interface {
+	QueryString() (q string, err error)
+}
+
 // See https://developer.matomo.org/api-reference/reporting-api for detailed
 // information about the parameters.
 type Request struct {
+	Requestable
+
 	Module string `url:"module"` // eg, API
 	Method string `url:"method"` // eg, VisitsSummary.getVisits
 
@@ -51,6 +63,11 @@ func NewRequest() *Request {
 	}
 }
 
+func (r *Request) QueryString() (q string, err error) {
+	v, err := query.Values(r)
+	return v.Encode(), err
+}
+
 func (r *Request) SetSiteId(id int) *Request {
 	r.SiteId = id
 
@@ -73,4 +90,39 @@ func (r *Request) SetModule(module string) *Request {
 	r.Module = module
 
 	return r
+}
+
+type BulkRequest struct {
+	Requestable
+
+	Module    string    `url:"module"` // eg, API
+	Method    string    `url:"method"` // eg, VisitsSummary.getVisits
+	Format    string    `url:"format"` // one of FORMAT_*
+	Requests  []Request `url:"-"`
+	TokenAuth string    `url:"token_auth"` // eg, abc123
+}
+
+func NewBulkRequest() *BulkRequest {
+	return &BulkRequest{
+		Module: "API",
+		Method: "API.getBulkRequest",
+		Format: FORMAT_JSON,
+	}
+}
+
+func (r *BulkRequest) QueryString() (q string, err error) {
+	v, err := query.Values(r)
+
+	if err != nil {
+		return "", err
+	}
+
+	q = v.Encode()
+
+	for i, req := range r.Requests {
+		qs, _ := req.QueryString()
+		q += fmt.Sprintf("&urls[%d]=%s", i, qs)
+	}
+
+	return q, err
 }

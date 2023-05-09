@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-
-	"github.com/google/go-querystring/query"
 )
 
 type Metric interface{}
@@ -24,6 +22,10 @@ func NewClient(HostUrl string, ApiKey string, SiteId int) *Client {
 		HostUrl: HostUrl,
 		SiteId:  SiteId,
 	}
+}
+
+func (c *Client) BulkExecute(req *BulkRequest) (json string, err error) {
+	return "", err
 }
 
 func (c *Client) Execute(req *Request) (json string, err error) {
@@ -59,7 +61,7 @@ func (c *Client) Execute(req *Request) (json string, err error) {
 }
 
 // Get data and return Metric
-func (c *Client) Get(req *Request, m interface{}) (err error) {
+func (c *Client) Get(req Request, m interface{}) (err error) {
 	// todo design a better way to check if req is empty
 	if req.Method == "" {
 		return errors.New("use NewRequest() to create a request")
@@ -85,9 +87,4 @@ func (c *Client) Get(req *Request, m interface{}) (err error) {
 	}
 
 	return nil
-}
-
-func (r *Request) QueryString() (q string, err error) {
-	v, err := query.Values(r)
-	return v.Encode(), err
 }
